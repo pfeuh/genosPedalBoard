@@ -1,5 +1,5 @@
 
-#include "Pedal.h"
+#include "pedal.h"
 #include "jackOutput.h"
 #include "jackOutputPulse.h"
 
@@ -23,12 +23,13 @@
 #define CONSOLE_OUT_DEV Serial
 #define DEBUG_ON_UART
 
-PEDAL genericPurpose     = PEDAL(2);
-PEDAL fingeredOnBass     = PEDAL(3);
-PEDAL sustain            = PEDAL(4);
-PEDAL halfMoon           = PEDAL(5);
-JACK_OUTPUT genosPedal2  = JACK_OUTPUT(6);
-JACK_OUTPUT_PULSE leslie = JACK_OUTPUT_PULSE(7);
+PEDAL pedal1     = PEDAL(2, PEDAL_LOGIC_AUTO);
+PEDAL pedal2     = PEDAL(3, PEDAL_LOGIC_AUTO);
+PEDAL pedal3     = PEDAL(4, PEDAL_LOGIC_AUTO);
+PEDAL pedalSlow  = PEDAL(5);
+PEDAL pedalFast  = PEDAL(6);
+//~ JACK_OUTPUT genosPedal2  = JACK_OUTPUT(7);
+//~ JACK_OUTPUT_PULSE leslie = JACK_OUTPUT_PULSE(8);
 
 const char PROGMEM title[]   = "genosPedalBoard   v. " GENOS_PEDAL_BOARD_VERSION;
 const char PROGMEM splash1[] = "Pedal             v. " PEDAL_VERSION;
@@ -66,68 +67,54 @@ void noteOff(byte note)
     #endif
 }
 
-void pushedGenericPurpose()
+void pedal1On()
 {
-    #ifdef DEBUG_ON_UART
-    CONSOLE_OUT_DEV.println(F("Generic Purpose Pushed"));
-    #else
-    genosPedal2.switchOn();
-    #endif
+    CONSOLE_OUT_DEV.println(F("pedal 1 ON"));
 }
 
-void releasedGenericPurpose()
+void pedal2On()
 {
-    #ifdef DEBUG_ON_UART
-    CONSOLE_OUT_DEV.println(F("Generic Purpose Released"));
-    #else
-    genosPedal2.switchOff();
-    #endif
+    CONSOLE_OUT_DEV.println(F("pedal 2 ON"));
 }
 
-void pushedFingeredOnBass()
+void pedal3On()
 {
-    noteOn(GENOS_FINGERED_ON_BASS_NOTE);
-    noteOff(GENOS_FINGERED_ON_BASS_NOTE);
+    CONSOLE_OUT_DEV.println(F("pedal 3 ON"));
 }
 
-void releasedFingeredOnBass()
+void pedalSlowOn()
 {
-    noteOn(GENOS_FINGERED_ON_BASS_NOTE);
-    noteOff(GENOS_FINGERED_ON_BASS_NOTE);
+    CONSOLE_OUT_DEV.println(F("pedal slow ON"));
 }
 
-void pushedSustain()
+void pedalFastOn()
 {
-    #ifdef DEBUG_ON_UART
-    CONSOLE_OUT_DEV.println(F("Sustain switched on (not implemented yet)"));
-    #else
-    #endif
+    CONSOLE_OUT_DEV.println(F("pedal fast ON"));
 }
 
-void releasedSustain()
+void pedal1Off()
 {
-    #ifdef DEBUG_ON_UART
-    CONSOLE_OUT_DEV.println(F("Sustain switched off (not implemented yet)"));
-    #else
-    #endif
+    CONSOLE_OUT_DEV.println(F("pedal 1 OFF"));
 }
 
-void pushedHalfMoon()
+void pedal2Off()
 {
-    #ifdef DEBUG_ON_UART
-    CONSOLE_OUT_DEV.println(F("Half moon switched on"));
-    #else
-    leslie.sendPulse();
-    #endif
+    CONSOLE_OUT_DEV.println(F("pedal 2 OFF"));
 }
 
-void releasedHalfMoon()
+void pedal3Off()
 {
-    #ifdef DEBUG_ON_UART
-    CONSOLE_OUT_DEV.println(F("Half moon switched off"));
-    #else
-    leslie.sendPulse();
-    #endif
+    CONSOLE_OUT_DEV.println(F("pedal 3 OFF"));
+}
+
+void pedalSlowOff()
+{
+    CONSOLE_OUT_DEV.println(F("pedal slow OFF"));
+}
+
+void pedalFastOff()
+{
+    CONSOLE_OUT_DEV.println(F("pedal fast OFF"));
 }
 
 void cPrint(const char* address)
@@ -155,33 +142,33 @@ void setup()
     CONSOLE_OUT_DEV.begin(31250);
     #endif
 
-    genericPurpose.begin();
-    fingeredOnBass.begin();
-    sustain.begin();
-    halfMoon.begin();
-    leslie.begin();
-    genosPedal2.begin();
+    pedal1.begin();
+    pedal2.begin();
+    pedal3.begin();
+    pedalSlow.begin();
+    pedalFast.begin();
 
-    genericPurpose.setPushedHandler(&pushedGenericPurpose);
-    genericPurpose.setReleasedHandler(&releasedGenericPurpose);
-    fingeredOnBass.setPushedHandler(&pushedFingeredOnBass);
-    fingeredOnBass.setReleasedHandler(&releasedFingeredOnBass);
-    sustain.setPushedHandler(&pushedSustain);
-    sustain.setReleasedHandler(&releasedSustain);
-    halfMoon.setPushedHandler(&pushedHalfMoon);
-    halfMoon.setReleasedHandler(&releasedHalfMoon);
+    pedal1.setPushedHandler(&pedal1On);
+    pedal1.setReleasedHandler(&pedal1Off);
+    pedal2.setPushedHandler(&pedal2On);
+    pedal2.setReleasedHandler(&pedal2Off);
+    pedal3.setPushedHandler(&pedal3On);
+    pedal3.setReleasedHandler(&pedal3Off);
+    pedalSlow.setPushedHandler(&pedalSlowOn);
+    pedalSlow.setReleasedHandler(&pedalSlowOff);
+    pedalFast.setPushedHandler(&pedalFastOn);
+    pedalFast.setReleasedHandler(&pedalFastOff);
     
     pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop()
 {
-    genericPurpose.sequencer();
-    fingeredOnBass.sequencer();
-    sustain.sequencer();
-    halfMoon.sequencer();
-    leslie.sequencer();
-    genosPedal2.sequencer();
+    pedal1.sequencer();
+    pedal2.sequencer();
+    pedal3.sequencer();
+    pedalSlow.sequencer();
+    pedalFast.sequencer();
 
     if(millis() & 0x200)
         digitalWrite(LED_BUILTIN, 0);

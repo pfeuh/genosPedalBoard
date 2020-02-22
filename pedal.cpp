@@ -15,10 +15,17 @@ PEDAL::PEDAL(int _pin)
     pin = _pin;
 }
 
+PEDAL::PEDAL(int _pin, byte _logic)
+{
+    pin = _pin;
+    logic = _logic;
+}
+
 void PEDAL::begin()
 {
     pinMode(pin, INPUT_PULLUP);
-    previousState = 1;
+    init_state = digitalRead(pin);
+    previousState = init_state;
     pushedHandler = 0;
     releasedHandler = 0;
 }
