@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define PEDAL_VERSION "1.00"
+#define PEDAL_VERSION "1.01"
 
 #define PEDAL_LOGIC_NORMAL 0
 #define PEDAL_LOGIC_REVERTED 1
@@ -23,8 +23,8 @@ class PEDAL
 
     private:
         int pin;
-        bool init_state;
-        byte logic;
+        //~ bool init_state;
+        bool logic;
         byte previousState;
         pedal_CB pushedHandler;
         pedal_CB releasedHandler;
